@@ -8,4 +8,4 @@
 build/
 src/yafs.egg-info/
 venv/
-yafs
+src/yafs
