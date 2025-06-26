@@ -13,7 +13,7 @@ def display_final_summary():
     
     # Define categories and their contents
     categories = {
-        'src/result': {
+        'Hasil/result': {
             'name': '📊 MAIN EXPERIMENT RESULTS',
             'description': 'Analisis hasil eksperimen utama',
             'expected_files': [
@@ -23,7 +23,7 @@ def display_final_summary():
                 'availability_analysis.png'
             ]
         },
-        'src/perbandingan': {
+        'Hasil/perbandingan': {
             'name': '🔄 COMPARISON ANALYSIS',
             'description': 'Perbandingan GA vs metode baseline',
             'expected_files': [
@@ -31,7 +31,7 @@ def display_final_summary():
                 'ga_convergence.png'
             ]
         },
-        'src/dashboard': {
+        'Hasil/dashboard': {
             'name': '📈 COMPREHENSIVE DASHBOARD', 
             'description': 'Dashboard lengkap dan summary table',
             'expected_files': [
@@ -132,9 +132,9 @@ def display_final_summary():
     # Usage instructions
     print(f"\n💡 USAGE INSTRUCTIONS:")
     instructions = [
-        "1. Review main results in src/result/ for experiment analysis",
-        "2. Check src/perbandingan/ for GA vs baseline comparison",
-        "3. Use src/dashboard/ for presentation-ready visualizations",
+        "1. Review main results in Hasil/result/ for experiment analysis",
+        "2. Check Hasil/perbandingan/ for GA vs baseline comparison",
+        "3. Use Hasil/dashboard/ for presentation-ready visualizations",
         "4. All files are high-resolution PNG (300 DPI) suitable for papers",
         "5. Run scripts individually to regenerate specific categories"
     ]

@@ -201,7 +201,7 @@ def create_evaluation_dashboard():
     
     # Save the dashboard
     plt.suptitle('')  # Remove default title
-    plt.savefig('src/dashboard/evaluation_dashboard.png', dpi=300, bbox_inches='tight',
+    plt.savefig('Hasil/dashboard/evaluation_dashboard.png', dpi=300, bbox_inches='tight',
                 facecolor='white', edgecolor='none')
     plt.close()  # Close to save memory
 
@@ -283,7 +283,7 @@ def create_summary_table():
     plt.title('Comprehensive Evaluation Summary Table', 
               fontsize=16, fontweight='bold', pad=20)
     
-    plt.savefig('src/dashboard/summary_table.png', dpi=300, bbox_inches='tight',
+    plt.savefig('Hasil/dashboard/summary_table.png', dpi=300, bbox_inches='tight',
                 facecolor='white', edgecolor='none')
     plt.close()  # Close to save memory
     
@@ -294,7 +294,7 @@ def main():
     print("🎨 Creating evaluation dashboard...")
     
     # Create plots directory if not exists
-    os.makedirs('src/dashboard', exist_ok=True)
+    os.makedirs('Hasil/dashboard', exist_ok=True)
     
     # Create comprehensive dashboard
     create_evaluation_dashboard()
@@ -304,10 +304,10 @@ def main():
     summary_df = create_summary_table()
     
     print("✅ Dashboard and summary table created successfully!")
-    print(f"📁 All files saved to: src/dashboard/")
+    print(f"📁 All files saved to: Hasil/dashboard/")
     
     # Print file list
-    plot_files = os.listdir('src/dashboard')
+    plot_files = os.listdir('Hasil/dashboard')
     print(f"\n📊 Generated visualization files:")
     for file in sorted(plot_files):
         print(f"  • {file}")

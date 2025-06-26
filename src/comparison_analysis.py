@@ -259,7 +259,7 @@ def plot_comparison_metrics(ga_metrics, baseline_metrics):
         bars[0].set_linewidth(2)
     
     plt.tight_layout()
-    plt.savefig('src/perbandingan/ga_comparison.png', dpi=300, bbox_inches='tight')
+    plt.savefig('Hasil/perbandingan/ga_comparison.png', dpi=300, bbox_inches='tight')
     plt.close()  # Close to save memory
 
 def plot_convergence_analysis():
@@ -308,7 +308,7 @@ def plot_convergence_analysis():
     plt.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('src/perbandingan/ga_convergence.png', dpi=300, bbox_inches='tight')
+    plt.savefig('Hasil/perbandingan/ga_convergence.png', dpi=300, bbox_inches='tight')
     plt.close()  # Close to save memory
 
 def generate_comprehensive_report():
@@ -357,7 +357,7 @@ def main():
     print("🚀 Starting comprehensive GA evaluation...")
     
     # Create plots directory
-    os.makedirs('src/perbandingan', exist_ok=True)
+    os.makedirs('Hasil/perbandingan', exist_ok=True)
     
     # Generate comparison plots
     print("📊 Generating comparison plots...")
@@ -371,7 +371,7 @@ def main():
     print("📋 Generating comprehensive report...")
     generate_comprehensive_report()
     
-    print(f"\n✅ All evaluation plots saved to: src/perbandingan/")
+    print(f"\n✅ All evaluation plots saved to: Hasil/perbandingan/")
     print("✅ Comprehensive evaluation completed!")
 
 if __name__ == "__main__":

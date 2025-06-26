@@ -13,9 +13,9 @@ import time
 def create_directories():
     """Buat semua direktori yang diperlukan"""
     directories = [
-        'src/result',
-        'src/perbandingan', 
-        'src/dashboard'
+        'Hasil/result',
+        'Hasil/perbandingan', 
+        'Hasil/dashboard'
     ]
     
     for dir_path in directories:
@@ -29,19 +29,19 @@ def run_evaluation_scripts():
         {
             'name': 'Main Results Analysis',
             'script': 'plot_evaluation.py',
-            'output_dir': 'src/result',
+            'output_dir': 'Hasil/result',
             'description': 'Resource usage, delay analysis, deadline performance, availability'
         },
         {
             'name': 'Comparison Analysis', 
             'script': 'comparison_analysis.py',
-            'output_dir': 'src/perbandingan',
+            'output_dir': 'Hasil/perbandingan',
             'description': 'GA vs baseline methods, convergence analysis'
         },
         {
             'name': 'Dashboard Creation',
             'script': 'create_dashboard.py', 
-            'output_dir': 'src/dashboard',
+            'output_dir': 'Hasil/dashboard',
             'description': 'Comprehensive dashboard and summary table'
         }
     ]
@@ -60,8 +60,9 @@ def run_evaluation_scripts():
         start_time = time.time()
         
         try:
-            # Run the script
-            result = subprocess.run(['python', script_info['script']], 
+            # Run the script menggunakan virtual environment python
+            python_exe = 'e:/KULIAH/SIB/ServicePlacementWithGA/.venv/Scripts/python.exe'
+            result = subprocess.run([python_exe, script_info['script']], 
                                   capture_output=True, text=True, cwd='.')
             
             if result.returncode == 0:
@@ -96,9 +97,9 @@ def print_summary():
     print("="*80)
     
     directories = {
-        'src/result': 'Main Experiment Results',
-        'src/perbandingan': 'Comparison Analysis', 
-        'src/dashboard': 'Comprehensive Dashboard'
+        'Hasil/result': 'Main Experiment Results',
+        'Hasil/perbandingan': 'Comparison Analysis', 
+        'Hasil/dashboard': 'Comprehensive Dashboard'
     }
     
     total_files = 0

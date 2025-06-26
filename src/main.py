@@ -37,7 +37,6 @@ def create_applications_from_json(data):
         for message in app["message"]:
             if message["s"] == "None":
                 a.add_source_messages(ms[message["name"]])
-                print(f"[DEBUG] Added source message {message['name']} for app {app['name']}")
 
         # Add service modules dan transmissions
         for trans in app["transmission"]:
@@ -65,14 +64,6 @@ def main(simulated_time, path, pathResults, it):
 
     # Load population
     dataPopulation = json.load(open(os.path.join(path, 'usersDefinition.json')))
-
-    # DEBUG: Print info
-    print("=== DEBUG INFO ===")
-    print(f"Total nodes in topology: {len(t.G.nodes())}")
-    print(f"Total edges in topology: {len(t.G.edges())}")
-    print(f"Apps created: {list(apps.keys())}")
-    print(f"Total allocation entries: {len(placementJson['initialAllocation'])}")
-    print(f"Total user sources: {len(dataPopulation['sources'])}")
     
     # SIMULATION ENGINE
     stop_time = simulated_time
@@ -84,33 +75,25 @@ def main(simulated_time, path, pathResults, it):
 
     # Deploy per aplikasi
     for aName in apps.keys():
-        print(f"\n=== Processing App: {aName} ===")
         data = [element for element in dataPopulation["sources"] if str(element.get('app', '')) == aName]
-        print(f"Found {len(data)} users for app {aName}")
         
         if data:
-            print(f"User data: {data}")
             # Buat population untuk app ini
             pop_app = JSONPopulation({"sources": data}, it, name=f"Pop_{aName}")
-            print(f"Deploying app {aName} with placement, population, and selector...")
             
             # Deploy app dengan placement, population, dan selector
             s.deploy_app2(apps[aName], placement, pop_app, selector)
-            
-            print(f"App {aName} deployed successfully")
-        else:
-            print(f"No users found for app {aName}")
 
-    print(f"\nRunning simulation for {stop_time} units...")
+    print("Running simulation...")
     s.run(stop_time, test_initial_deploy=False, show_progress_monitor=False)
-    print("Simulation finished.")
+    print("Simulation completed.")
 
 if __name__ == '__main__':
     # Path setup
     runpath = os.getcwd()
-    pathExperimento = "data/"  # Ganti sesuai lokasi file JSON kamu
+    pathExperimento = "data/" 
     nSimulations = 1
-    timeSimulation = 100  # Kurangi waktu simulasi untuk debug
+    timeSimulation = 1000  
     datestamp = time.strftime('%Y%m%d')
     dname = os.path.join(pathExperimento, f"results_{datestamp}/")
     os.makedirs(dname, exist_ok=True)

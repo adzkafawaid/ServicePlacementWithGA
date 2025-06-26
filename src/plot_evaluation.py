@@ -367,7 +367,7 @@ def main():
     # Setup
     plt.style.use('default')  # Use default style instead of seaborn
     results_path = "data/results_20250626"
-    plots_path = "src/result"
+    plots_path = "Hasil/result"
     os.makedirs(plots_path, exist_ok=True)
     
     print("🔄 Loading experiment data...")
