@@ -7,5 +7,3 @@
 !.vscode/launch.json
 build/
 src/yafs.egg-info/
-venv/
-src/yafs/

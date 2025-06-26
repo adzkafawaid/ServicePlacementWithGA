@@ -12,6 +12,7 @@ from yafs.topology import Topology
 from yafs.distribution import exponentialDistribution
 from yafs.application import fractional_selectivity
 from yafs.placement import JSONPlacement
+from yafs.selection import First_ShortestPath
 from jsonPopulation import JSONPopulation
 
 def create_applications_from_json(data):
@@ -61,7 +62,6 @@ def main(simulated_time, path, pathResults, it):
 
     # Load placement (pakai hasil GA)
     placementJson = json.load(open(os.path.join(path, 'allocDefinitionGA.json')))
-    placement = JSONPlacement(name="Placement", json=placementJson)
 
     # Load population
     dataPopulation = json.load(open(os.path.join(path, 'usersDefinition.json')))
@@ -77,6 +77,10 @@ def main(simulated_time, path, pathResults, it):
     # SIMULATION ENGINE
     stop_time = simulated_time
     s = Sim(t, default_results_path=os.path.join(pathResults, f"Results_{stop_time}_{it}"))
+    
+    # Create placement and selection
+    placement = JSONPlacement(name="JSONPlacement", json=placementJson)
+    selector = First_ShortestPath()
 
     # Deploy per aplikasi
     for aName in apps.keys():
@@ -86,12 +90,13 @@ def main(simulated_time, path, pathResults, it):
         
         if data:
             print(f"User data: {data}")
-            # Lambda diambil dari JSON jika ada, jika tidak random
-            lambd = data[0]["lambda"] if data and "lambda" in data[0] else random.randint(100, 1000)
-            distribution = exponentialDistribution(name="Exp", lambd=lambd, seed=int(aName)*100+it)
+            # Buat population untuk app ini
             pop_app = JSONPopulation({"sources": data}, it, name=f"Pop_{aName}")
-            print(f"Deploying app {aName} with placement...")
-            s.deploy_app(apps[aName], placement, pop_app)
+            print(f"Deploying app {aName} with placement, population, and selector...")
+            
+            # Deploy app dengan placement, population, dan selector
+            s.deploy_app2(apps[aName], placement, pop_app, selector)
+            
             print(f"App {aName} deployed successfully")
         else:
             print(f"No users found for app {aName}")
@@ -105,7 +110,7 @@ if __name__ == '__main__':
     runpath = os.getcwd()
     pathExperimento = "data/"  # Ganti sesuai lokasi file JSON kamu
     nSimulations = 1
-    timeSimulation = 10000
+    timeSimulation = 100  # Kurangi waktu simulasi untuk debug
     datestamp = time.strftime('%Y%m%d')
     dname = os.path.join(pathExperimento, f"results_{datestamp}/")
     os.makedirs(dname, exist_ok=True)
