@@ -148,27 +148,84 @@ class SolutionGA:
 
     def mutationSwapNode(self) -> None:
         print("[SolutionGA] Mutasi: swap node...")
-        node1, node2 = self.randomNG.choice(self.numberOfNodes, 2, replace=False)
-        for i in range(self.numberOfServices):
-            self.chromosome[i][node1], self.chromosome[i][node2] = self.chromosome[i][node2], self.chromosome[i][node1]
+        
+        # Buat set untuk melacak node yang terkait user constraint
+        user_constraint_nodes = set()
+        if hasattr(self.ec, "user_module_node"):
+            for (app, mod_dst, node) in self.ec.user_module_node:
+                user_constraint_nodes.add(node)
+        
+        # Pilih node yang tidak melanggar user constraint
+        available_nodes = [n for n in range(self.numberOfNodes) if n not in user_constraint_nodes]
+        
+        if len(available_nodes) >= 2:
+            node1, node2 = self.randomNG.choice(available_nodes, 2, replace=False)
+            for i in range(self.numberOfServices):
+                # Jangan swap jika service i memiliki user constraint
+                has_user_constraint = False
+                if hasattr(self.ec, "user_module_node"):
+                    for (app, mod_dst, node) in self.ec.user_module_node:
+                        idx = self.ec.module2idx.get((app, mod_dst), None)
+                        if idx == i:
+                            has_user_constraint = True
+                            break
+                
+                if not has_user_constraint:
+                    self.chromosome[i][node1], self.chromosome[i][node2] = self.chromosome[i][node2], self.chromosome[i][node1]
 
     def mutationSwapService(self) -> None:
         print("[SolutionGA] Mutasi: swap service...")
-        s1, s2 = self.randomNG.choice(self.numberOfServices, 2, replace=False)
-        self.chromosome[s1], self.chromosome[s2] = self.chromosome[s2], self.chromosome[s1]
+        
+        # Buat set untuk melacak service yang memiliki user constraint
+        user_constraint_services = set()
+        if hasattr(self.ec, "user_module_node"):
+            for (app, mod_dst, node) in self.ec.user_module_node:
+                idx = self.ec.module2idx.get((app, mod_dst), None)
+                if idx is not None:
+                    user_constraint_services.add(idx)
+        
+        # Pilih service yang tidak memiliki user constraint
+        available_services = [s for s in range(self.numberOfServices) if s not in user_constraint_services]
+        
+        if len(available_services) >= 2:
+            s1, s2 = self.randomNG.choice(available_services, 2, replace=False)
+            self.chromosome[s1], self.chromosome[s2] = self.chromosome[s2], self.chromosome[s1]
+
+    def enforceUserConstraints(self):
+        """
+        Memastikan user constraints selalu terpenuhi pada kromosom.
+        Dipanggil setelah crossover atau operasi yang bisa merusak constraint.
+        """
+        if hasattr(self.ec, "user_module_node"):
+            for (app, mod_dst, node) in self.ec.user_module_node:
+                idx = self.ec.module2idx.get((app, mod_dst), None)
+                if idx is not None and node < self.numberOfNodes:
+                    # Pastikan module tujuan user ada di node user
+                    self.chromosome[idx][node] = 1
 
     def repairChromosome(self):
             """
             Memperbaiki kromosom agar:
             1. Tidak ada node overload (resource usage <= kapasitas)
             2. Setiap service minimal di-deploy di 1 node
+            3. User constraints tetap terjaga (module tujuan user di node user)
             """
             nodeResUse = [0.0 for _ in range(self.numberOfNodes)]
+            
+            # Buat set untuk melacak constraint user (service_idx, node) yang wajib
+            user_constraints = set()
+            if hasattr(self.ec, "user_module_node"):
+                for (app, mod_dst, node) in self.ec.user_module_node:
+                    idx = self.ec.module2idx.get((app, mod_dst), None)
+                    if idx is not None and node < self.numberOfNodes:
+                        user_constraints.add((idx, node))
+            
             # Hitung resource awal
             for idServ, serviceAllocation in enumerate(self.chromosome):
                 for idNode, deployed in enumerate(serviceAllocation):
                     if deployed:
                         nodeResUse[idNode] += self.serviceResources[idServ]
+            
             # Repair node overload
             for idNode in range(self.numberOfNodes):
                 while nodeResUse[idNode] > self.nodeResources[idNode]:
@@ -176,6 +233,9 @@ class SolutionGA:
                     found = False
                     for idServ, serviceAllocation in enumerate(self.chromosome):
                         if serviceAllocation[idNode]:
+                            # JANGAN hapus jika ini adalah constraint user
+                            if (idServ, idNode) in user_constraints:
+                                continue
                             # Pastikan service ini masih punya instance di node lain
                             if sum(self.chromosome[idServ]) > 1:
                                 self.chromosome[idServ][idNode] = 0
@@ -185,6 +245,7 @@ class SolutionGA:
                     if not found:
                         # Tidak bisa repair lagi, break biar constraint gagal
                         break
+            
             # Repair service yang tidak dideploy
             for idServ, serviceAllocation in enumerate(self.chromosome):
                 if sum(serviceAllocation) == 0:
@@ -203,6 +264,10 @@ class SolutionGA:
             while not satisfiedConstraints and attempts < max_attempts:
                 mutationOperators = [self.mutationSwapNode, self.mutationSwapService]
                 mutationOperators[self.randomNG.randint(len(mutationOperators))]()
+                
+                # Pastikan user constraints selalu terpenuhi setelah mutasi
+                self.enforceUserConstraints()
+                
                 self.repairChromosome()  # <--- Tambahkan repair di sini
                 satisfiedConstraints = self.checkConstraints()
                 attempts += 1
@@ -232,6 +297,10 @@ class SolutionGA:
                     sol.objectivesFunctions = self.objectivesFunctions
                     sol.nodeResources = self.nodeResources
                     sol.serviceResources = self.serviceResources
+                    
+                    # Pastikan user constraints terpenuhi di offspring
+                    sol.enforceUserConstraints()
+                    
                     sol.repairChromosome()  # <--- Tambahkan repair di sini
                     solutions.append(sol)
                     satisfiedConstraints = satisfiedConstraints and sol.checkConstraints()

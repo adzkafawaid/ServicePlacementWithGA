@@ -42,6 +42,14 @@ class EnvConfig:
                 if msg_obj:
                     mod_dst = msg_obj["d"]
                     self.user_module_node.add((app, mod_dst, node))
+                    print(f"[DEBUG] User mapping: App {app}, Module {mod_dst}, Node {node}")
+                else:
+                    print(f"[DEBUG] Message {msg} tidak ditemukan untuk app {app}")
+            else:
+                print(f"[DEBUG] App {app} tidak ditemukan")
+        
+        print(f"[DEBUG] Total user_module_node mappings: {len(self.user_module_node)}")
+        print(f"[DEBUG] User mappings: {self.user_module_node}")
 
     def getNumberOfNodes(self):
         return self.numberOfNodes
@@ -74,7 +82,7 @@ if __name__ == "__main__":
     print("\n=== DEBUG: Mapping Kromosom Solusi Terbaik ===")
     for idx, allocation in enumerate(chromosome):
         app_name, mod_name = ec.idx2module[idx]
-        print(f"Service ke-{idx} (App: {app_name}, Module: {mod_name}): {allocation}")
+        
     print("Jumlah node:", ec.getNumberOfNodes())
     print("Jumlah service:", ec.getNumberOfServices())
     print("Kapasitas RAM tiap node:", ec.getNodeResources())
