@@ -9,9 +9,9 @@ from collections import defaultdict
 def load_experiment_data(results_path):
     """Load hasil eksperimen dari CSV files"""
     # Load main results
-    results_file = os.path.join(results_path, "Results_100_0.csv")
-    link_file = os.path.join(results_path, "Results_100_0_link.csv")
-    
+    results_file = os.path.join(results_path, "Results_1000_0.csv")
+    link_file = os.path.join(results_path, "Results_1000_0_link.csv")
+
     if os.path.exists(results_file):
         df_results = pd.read_csv(results_file)
     else:
@@ -366,7 +366,7 @@ def main():
     """Main evaluation function"""
     # Setup
     plt.style.use('default')  # Use default style instead of seaborn
-    results_path = "data/results_20250626"
+    results_path = "data/results_20250629"  # Updated to current date
     plots_path = "Hasil/result"
     os.makedirs(plots_path, exist_ok=True)
     

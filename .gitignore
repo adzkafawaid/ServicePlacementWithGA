@@ -6,4 +6,7 @@
 !.vscode/settings.json
 !.vscode/launch.json
 build/
-src/yafs.egg-info/
+laporan_penelitian.md
+DiagramAlir.drawio.png
+src/yafs//*.egg-info/
+.venv/

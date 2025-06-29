@@ -8,9 +8,9 @@ def compare_ga_vs_baseline():
     """Compare GA results with baseline allocation methods"""
     
     # Load GA results
-    ga_results_path = "data/results_20250626"
-    ga_results = pd.read_csv(os.path.join(ga_results_path, "Results_100_0.csv"))
-    ga_links = pd.read_csv(os.path.join(ga_results_path, "Results_100_0_link.csv"))
+    ga_results_path = "data/results_20250629"
+    ga_results = pd.read_csv(os.path.join(ga_results_path, "Results_1000_0.csv"))
+    ga_links = pd.read_csv(os.path.join(ga_results_path, "Results_1000_0_link.csv"))
     
     # Load allocation info
     with open('data/allocDefinitionGA.json', 'r') as f:

@@ -9,9 +9,9 @@ def create_evaluation_dashboard():
     """Create a comprehensive evaluation dashboard"""
     
     # Load experimental data
-    results_path = "data/results_20250626"
-    df_results = pd.read_csv(os.path.join(results_path, "Results_100_0.csv"))
-    df_links = pd.read_csv(os.path.join(results_path, "Results_100_0_link.csv"))
+    results_path = "data/results_20250629"
+    df_results = pd.read_csv(os.path.join(results_path, "Results_1000_0.csv"))
+    df_links = pd.read_csv(os.path.join(results_path, "Results_1000_0_link.csv"))
     
     # Create the dashboard
     fig = plt.figure(figsize=(20, 12))
